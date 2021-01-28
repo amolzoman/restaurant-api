@@ -34,8 +34,8 @@ public class DatabaseProducer {
 
             @Override
             public void onFailure(KafkaProducerException e) {
-                ProducerRecord<Object, Object> failedProducerRecord = e.getFailedProducerRecord();
-                log.error("Failed to produce " + failedProducerRecord);
+                ProducerRecord<String, Restaurant> failedProducerRecord = e.getFailedProducerRecord();
+                log.error("Failed to produce " + failedProducerRecord.value());
             }
         });
     }
