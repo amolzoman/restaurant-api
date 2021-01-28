@@ -3,6 +3,7 @@ package com.zomato.restaurantapi.kafka.producer;
 import com.zomato.restaurantapi.model.Restaurant;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
@@ -17,10 +18,13 @@ import java.util.Map;
 @Configuration
 @EnableKafka
 public class KafkaProducerDatabaseConfig {
+    @Value("${kafka.bootstrapServer}")
+    private String bootstrapServer;
+
     @Bean
     public Map<String, Object> producerConfigsDatabase() {
         Map<String, Object> properties = new HashMap<>();
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         return properties;
