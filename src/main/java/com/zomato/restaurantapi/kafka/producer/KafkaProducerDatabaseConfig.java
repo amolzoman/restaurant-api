@@ -22,7 +22,7 @@ public class KafkaProducerDatabaseConfig {
     private String bootstrapServer;
 
     @Bean
-    public Map<String, Object> producerConfigsDatabase() {
+    public Map<String, Object> producerConfigs() {
         Map<String, Object> properties = new HashMap<>();
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -31,12 +31,12 @@ public class KafkaProducerDatabaseConfig {
     }
 
     @Bean
-    public ProducerFactory<String, Restaurant> producerFactoryDatabase() {
-        return new DefaultKafkaProducerFactory<>(producerConfigsDatabase());
+    public ProducerFactory<String, Restaurant> producerFactory() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 
     @Bean
     public KafkaTemplate<String, Restaurant> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactoryDatabase());
+        return new KafkaTemplate<>(producerFactory());
     }
 }
