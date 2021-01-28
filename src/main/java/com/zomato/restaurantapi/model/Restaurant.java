@@ -45,4 +45,14 @@ public class Restaurant {
     public void setNumberOfSeats(int numberOfSeats) {
         this.numberOfSeats = numberOfSeats;
     }
+
+    @Override
+    public String toString() {
+        return "Restaurant{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", isDineInAvailable=" + isDineInAvailable +
+                ", numberOfSeats=" + numberOfSeats +
+                '}';
+    }
 }
