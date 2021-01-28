@@ -9,10 +9,10 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DatabaseConsumer {
+public class RestaurantConsumer {
     private static final String TOPIC = KafkaUtils.TOPICS.RESTAURANT_CREATE_TOPIC;
 
-    private static final Logger log = LoggerFactory.getLogger(DatabaseConsumer.class);
+    private static final Logger log = LoggerFactory.getLogger(RestaurantConsumer.class);
 
     @KafkaListener(topics = TOPIC)
     public void consume(ConsumerRecord<String, Restaurant> consumerRecord) {

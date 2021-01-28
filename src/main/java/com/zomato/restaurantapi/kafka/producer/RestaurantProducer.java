@@ -14,10 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.concurrent.ListenableFuture;
 
 @Service
-public class DatabaseProducer {
+public class RestaurantProducer {
     private static final String TOPIC = KafkaUtils.TOPICS.RESTAURANT_CREATE_TOPIC;
 
-    private static final Logger log = LoggerFactory.getLogger(DatabaseProducer.class);
+    private static final Logger log = LoggerFactory.getLogger(RestaurantProducer.class);
 
     @Autowired
     private KafkaTemplate<String, Restaurant> kafkaTemplate;

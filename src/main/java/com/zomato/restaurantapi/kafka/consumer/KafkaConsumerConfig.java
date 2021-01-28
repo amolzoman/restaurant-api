@@ -19,7 +19,7 @@ import java.util.Map;
 
 @Configuration
 @EnableKafka
-public class KafkaConsumerDatabaseConfig {
+public class KafkaConsumerConfig {
     @Value("${kafka.bootstrapServer}")
     private String bootstrapServer;
 
