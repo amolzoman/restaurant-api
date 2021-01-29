@@ -1,9 +1,11 @@
 package com.zomato.restaurantapi.controller;
 
 import com.zomato.restaurantapi.exception.RestaurantNotFoundException;
+import com.zomato.restaurantapi.kafka.service.RestaurantProducerServiceImpl;
 import com.zomato.restaurantapi.model.Restaurant;
 import com.zomato.restaurantapi.repository.RestaurantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,6 +13,9 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/api/v1")
 public class RestaurantController {
+    @Autowired
+    private RestaurantProducerServiceImpl restaurantProducerService;
+
     @Autowired
     private RestaurantRepository restaurantRepository;
 
@@ -37,8 +42,9 @@ public class RestaurantController {
     }
 
     @PostMapping(path = "/restaurants")
-    public Restaurant addNewRestaurant(@RequestBody Restaurant restaurant) {
-        return restaurantRepository.save(restaurant);
+    public ResponseEntity<?> addNewRestaurant(@RequestBody Restaurant restaurant) {
+        restaurantProducerService.handleAddNewRestaurant(restaurant);
+        return ResponseEntity.accepted().build();
     }
 
     // @TODO: Inefficient since 2 db accesses
@@ -51,16 +57,18 @@ public class RestaurantController {
 
     // @TODO: Inefficient since 2 db accesses. Use proxy objects or SQL.
     @PatchMapping(path = "/restaurants/{id}")
-    public Restaurant updateRestaurantSeats(@PathVariable Long id, @RequestParam int numberOfSeats) {
+    public ResponseEntity<?> updateRestaurantSeats(@PathVariable Long id, @RequestParam int numberOfSeats) {
         Restaurant restaurant = getRestaurantByIdOrThrow(id);
         restaurant.setNumberOfSeats(numberOfSeats);
-        return restaurantRepository.save(restaurant);
+        restaurantProducerService.handleAddNewRestaurant(restaurant);
+        return ResponseEntity.accepted().build();
     }
 
     @PutMapping(path = "/restaurants/{id}")
-    public Restaurant updateRestaurant(@PathVariable Long id, @RequestBody Restaurant restaurant) {
+    public ResponseEntity<?> updateRestaurant(@PathVariable Long id, @RequestBody Restaurant restaurant) {
         restaurant.setId(id);
-        return restaurantRepository.save(restaurant);
+        restaurantProducerService.handleAddNewRestaurant(restaurant);
+        return ResponseEntity.accepted().build();
     }
 
     private Restaurant getRestaurantByIdOrThrow(Long id) throws RestaurantNotFoundException {
