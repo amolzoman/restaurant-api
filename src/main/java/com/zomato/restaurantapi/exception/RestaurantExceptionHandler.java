@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
-public class RestaurantNotFoundExceptionHandler {
+public class RestaurantExceptionHandler {
     @ResponseBody
     @ExceptionHandler(RestaurantNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
