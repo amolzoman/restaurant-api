@@ -52,12 +52,11 @@ public class RestaurantController {
     // someone write proper docs!
     @DeleteMapping(path = "/restaurants/{id}")
     public ResponseEntity<?> removeRestaurantById(@PathVariable Long id) {
-        if(restaurantRepository.existsById(id)) {
-            restaurantRepository.deleteById(id);
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.noContent().build();
+        if(!restaurantRepository.existsById(id)) {
+            throw new RestaurantNotFoundException(id);
         }
+        restaurantRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
     // @TODO: Inefficient since 2 db accesses. Use proxy objects or SQL.
