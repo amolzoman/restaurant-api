@@ -49,6 +49,8 @@ public class RestaurantController {
 
     // @TODO: Inefficient since 2 db accesses
     // existsById() might be using a count query
+    // No docs mention this but this is what I think after digging through the source code,
+    // but, if I were you I won't take my word.
     // someone write proper docs!
     @DeleteMapping(path = "/restaurants/{id}")
     public ResponseEntity<?> removeRestaurantById(@PathVariable Long id) {
