@@ -48,10 +48,15 @@ public class RestaurantController {
     }
 
     // @TODO: Inefficient since 2 db accesses
+    // existsById() might be using a count query
+    // someone write proper docs!
     @DeleteMapping(path = "/restaurants/{id}")
-    public void removeRestaurantById(@PathVariable Long id) {
+    public ResponseEntity<?> removeRestaurantById(@PathVariable Long id) {
         if(restaurantRepository.existsById(id)) {
             restaurantRepository.deleteById(id);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.noContent().build();
         }
     }
 
