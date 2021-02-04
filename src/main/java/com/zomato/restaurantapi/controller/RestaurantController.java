@@ -62,13 +62,13 @@ public class RestaurantController {
         return ResponseEntity.noContent().build();
     }
 
-    // @TODO: Inefficient since 2 db accesses. Use proxy objects or SQL.
     @PatchMapping(path = "/restaurants/{id}")
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateRestaurantSeats(@PathVariable Long id, @RequestParam int numberOfSeats) {
-        Restaurant restaurant = getRestaurantByIdOrThrow(id);
-        restaurant.setNumberOfSeats(numberOfSeats);
-        restaurantProducerService.handleAddNewRestaurant(restaurant);
+        int changed_records = restaurantRepository.updateRestaurantSeats(id, numberOfSeats);
+        if(changed_records == 0) {
+            throw new RestaurantNotFoundException(id);
+        }
     }
 
     @PutMapping(path = "/restaurants/{id}")
