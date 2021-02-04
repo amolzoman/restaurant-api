@@ -21,7 +21,9 @@ public class RestaurantConsumer {
 
     @KafkaListener(topics = TOPIC)
     public void consume(ConsumerRecord<String, Restaurant> consumerRecord) {
-        log.info("Consuming " + consumerRecord.value());
+        log.info("Consuming " + consumerRecord.value()
+                + " from partition " + consumerRecord.partition()
+                + " having offset " + consumerRecord.offset());
         restaurantConsumerService.handleAddNewRestaurant(consumerRecord.value());
     }
 }
