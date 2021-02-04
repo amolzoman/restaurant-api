@@ -5,6 +5,7 @@ import com.zomato.restaurantapi.kafka.service.RestaurantProducerServiceImpl;
 import com.zomato.restaurantapi.model.Restaurant;
 import com.zomato.restaurantapi.repository.RestaurantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,9 +43,9 @@ public class RestaurantController {
     }
 
     @PostMapping(path = "/restaurants")
-    public ResponseEntity<?> addNewRestaurant(@RequestBody Restaurant restaurant) {
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void addNewRestaurant(@RequestBody Restaurant restaurant) {
         restaurantProducerService.handleAddNewRestaurant(restaurant);
-        return ResponseEntity.accepted().build();
     }
 
     // @TODO: Inefficient since 2 db accesses
@@ -63,18 +64,18 @@ public class RestaurantController {
 
     // @TODO: Inefficient since 2 db accesses. Use proxy objects or SQL.
     @PatchMapping(path = "/restaurants/{id}")
-    public ResponseEntity<?> updateRestaurantSeats(@PathVariable Long id, @RequestParam int numberOfSeats) {
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void updateRestaurantSeats(@PathVariable Long id, @RequestParam int numberOfSeats) {
         Restaurant restaurant = getRestaurantByIdOrThrow(id);
         restaurant.setNumberOfSeats(numberOfSeats);
         restaurantProducerService.handleAddNewRestaurant(restaurant);
-        return ResponseEntity.accepted().build();
     }
 
     @PutMapping(path = "/restaurants/{id}")
-    public ResponseEntity<?> updateRestaurant(@PathVariable Long id, @RequestBody Restaurant restaurant) {
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void updateRestaurant(@PathVariable Long id, @RequestBody Restaurant restaurant) {
         restaurant.setId(id);
         restaurantProducerService.handleAddNewRestaurant(restaurant);
-        return ResponseEntity.accepted().build();
     }
 
     private Restaurant getRestaurantByIdOrThrow(Long id) throws RestaurantNotFoundException {
