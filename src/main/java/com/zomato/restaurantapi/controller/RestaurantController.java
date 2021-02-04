@@ -54,12 +54,12 @@ public class RestaurantController {
     // but, if I were you I won't take my word.
     // someone write proper docs!
     @DeleteMapping(path = "/restaurants/{id}")
-    public ResponseEntity<?> removeRestaurantById(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeRestaurantById(@PathVariable Long id) {
         if(!restaurantRepository.existsById(id)) {
             throw new RestaurantNotFoundException(id);
         }
         restaurantRepository.deleteById(id);
-        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping(path = "/restaurants/{id}")
