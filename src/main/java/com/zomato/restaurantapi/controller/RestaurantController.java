@@ -1,7 +1,7 @@
 package com.zomato.restaurantapi.controller;
 
 import com.zomato.restaurantapi.model.Restaurant;
-import com.zomato.restaurantapi.service.RestaurantServiceImpl;
+import com.zomato.restaurantapi.service.RestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +12,7 @@ import java.util.List;
 @RequestMapping(path = "/api/v1")
 public class RestaurantController {
     @Autowired
-    private RestaurantServiceImpl restaurantService;
+    private RestaurantService restaurantService;
 
     @GetMapping(path = "/restaurants")
     public List<Restaurant> getAllRestaurants() {
