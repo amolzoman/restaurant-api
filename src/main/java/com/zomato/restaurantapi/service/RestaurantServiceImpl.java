@@ -3,6 +3,7 @@ package com.zomato.restaurantapi.service;
 import com.zomato.restaurantapi.exception.RestaurantNotFoundException;
 import com.zomato.restaurantapi.kafka.service.RestaurantProducerServiceImpl;
 import com.zomato.restaurantapi.model.Restaurant;
+import com.zomato.restaurantapi.repository.RestaurantRedisRepository;
 import com.zomato.restaurantapi.repository.RestaurantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,9 +18,19 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Autowired
     private RestaurantRepository restaurantRepository;
 
+    @Autowired
+    private RestaurantRedisRepository restaurantRedisRepository;
+
     private Restaurant findByIdOrThrow(Long id) throws RestaurantNotFoundException {
-        return restaurantRepository.findById(id)
+        if(restaurantRedisRepository.hasRestaurant(id)) {
+            return restaurantRedisRepository.get(id);
+        }
+
+        Restaurant restaurant = restaurantRepository.findById(id)
                 .orElseThrow(() -> new RestaurantNotFoundException(id));
+        restaurantRedisRepository.put(restaurant);
+
+        return restaurant;
     }
 
     private Restaurant findByNameOrThrow(String name) throws RestaurantNotFoundException {
@@ -34,7 +45,12 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public List<Restaurant> findAll() {
-        return restaurantRepository.findAll();
+        List<Restaurant> restaurants = restaurantRepository.findAll();
+        for(Restaurant restaurant : restaurants) {
+            restaurantRedisRepository.put(restaurant);
+        }
+
+        return restaurants;
     }
 
     @Override
@@ -69,11 +85,14 @@ public class RestaurantServiceImpl implements RestaurantService {
         if(!restaurantRepository.existsById(id)) {
             throw new RestaurantNotFoundException(id);
         }
+
+        restaurantRedisRepository.evict(id);
         restaurantRepository.deleteById(id);
     }
 
     @Override
     public void updateSeats(Long id, int numberOfSeats) {
+        restaurantRedisRepository.evict(id);
         int changedRecords = restaurantRepository.updateRestaurantSeats(id, numberOfSeats);
         if(changedRecords == 0) {
             throw new RestaurantNotFoundException(id);
@@ -82,6 +101,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public void update(Long id, Restaurant restaurant) {
+        restaurantRedisRepository.evict(id);
         restaurant.setId(id);
         save(restaurant);
     }
