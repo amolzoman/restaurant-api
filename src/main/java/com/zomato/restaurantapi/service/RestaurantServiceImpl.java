@@ -39,15 +39,24 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     private List<Restaurant> findByDineInAvailabilityOrThrow(boolean dineInAvailable) throws RestaurantNotFoundException {
-        return restaurantRepository.findByIsDineInAvailable(dineInAvailable)
-                .orElseThrow(() -> new RestaurantNotFoundException(dineInAvailable));
+        List<Restaurant> restaurants = restaurantRedisRepository.getAllDineIn(dineInAvailable);
+
+        if(restaurants == null) {
+            restaurants = restaurantRepository.findByIsDineInAvailable(dineInAvailable)
+                    .orElseThrow(() -> new RestaurantNotFoundException((dineInAvailable)));
+            restaurantRedisRepository.putAllDineIn(restaurants, dineInAvailable);
+        }
+
+        return restaurants;
     }
 
     @Override
     public List<Restaurant> findAll() {
-        List<Restaurant> restaurants = restaurantRepository.findAll();
-        for(Restaurant restaurant : restaurants) {
-            restaurantRedisRepository.put(restaurant);
+        List<Restaurant> restaurants = restaurantRedisRepository.getAll();
+
+        if(restaurants == null) {
+            restaurants = restaurantRepository.findAll();
+            restaurantRedisRepository.putAll(restaurants);
         }
 
         return restaurants;
