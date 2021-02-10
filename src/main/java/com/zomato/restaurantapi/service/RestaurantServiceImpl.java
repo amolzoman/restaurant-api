@@ -3,7 +3,7 @@ package com.zomato.restaurantapi.service;
 import com.zomato.restaurantapi.exception.RestaurantNotFoundException;
 import com.zomato.restaurantapi.kafka.service.RestaurantProducerServiceImpl;
 import com.zomato.restaurantapi.model.Restaurant;
-import com.zomato.restaurantapi.repository.RestaurantRedisRepository;
+import com.zomato.restaurantapi.repository.RestaurantRedisRepositoryImpl;
 import com.zomato.restaurantapi.repository.RestaurantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     private RestaurantRepository restaurantRepository;
 
     @Autowired
-    private RestaurantRedisRepository restaurantRedisRepository;
+    private RestaurantRedisRepositoryImpl restaurantRedisRepository;
 
     private Restaurant findByIdOrThrow(Long id) throws RestaurantNotFoundException {
         if(restaurantRedisRepository.hasRestaurant(id)) {
