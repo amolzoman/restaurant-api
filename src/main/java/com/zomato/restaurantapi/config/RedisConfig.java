@@ -8,6 +8,8 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
@@ -33,7 +35,10 @@ public class RedisConfig {
 
     @Bean
     public RedisTemplate<String, Restaurant> redisTemplate() {
-        return genericRedisTemplate();
+        RedisTemplate<String, Restaurant> redisTemplate = genericRedisTemplate();
+        redisTemplate.setHashKeySerializer(new JdkSerializationRedisSerializer(Long.TYPE.getClassLoader()));
+        redisTemplate.setHashValueSerializer(new Jackson2JsonRedisSerializer<>(Restaurant.class));
+        return redisTemplate;
     }
 
     private <T> RedisTemplate<String, T> genericRedisTemplate() {
@@ -41,6 +46,8 @@ public class RedisConfig {
         redisTemplate.setConnectionFactory(connectionFactory());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
         return redisTemplate;
     }
 }
