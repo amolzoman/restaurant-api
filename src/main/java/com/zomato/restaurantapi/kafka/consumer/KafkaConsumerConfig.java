@@ -24,7 +24,7 @@ public class KafkaConsumerConfig {
     @Value("${kafka.consumer.group-id}")
     private String groupId;
 
-    @Value("${kafka.consumer.partitions}")
+    @Value("${kafka.topic.partitions}")
     private int numberOfPartitions;
 
     @Bean
